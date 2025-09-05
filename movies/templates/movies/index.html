@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1><strong>Movies</strong></h1>
+
+<!-- Filter Form -->
+<form method="get" class="mb-3">
+    <div class="row g-2 align-items-center">
+        <!-- Left side: filters + Filter button -->
+        <div class="col-auto d-flex">
+            <select name="genre" class="form-select me-2">
+                <option value="all">All Genres</option>
+                {% for genre in genres %}
+                <option value="{{ genre }}" {% if genre == select_genre %}selected{% endif %}>{{ genre }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="year" class="form-select me-2">
+                <option value="all">All Years</option>
+                {% for year in years %}
+                <option value="{{ year }}" {% if year|stringformat:"s" == select_year %}selected{% endif %}>{{ year }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Filter button -->
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+        <div class="col-auto d-flex">
+            <a href="{% url 'movies:index' %}" class="btn btn-primary">Show All</a>
+        </div>
+</form>
+
+
+<!-- Movies Table -->
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Genre</th>
+            {% comment %} <th>Description</th> {% endcomment %}
+            <th>Year</th>
+            <th>Rating</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for movie in movies %}
+        <tr>
+            <td><a href="{% url 'movies:detail' movie.id %}" class="movie-link">{{ movie.title }}</a></td>
+            <td>{{ movie.genre }}</td>
+            {% comment %} <td>{{ movie.description }}</td> {% endcomment %}
+            <td>{{ movie.year }}</td>
+            <td>
+                <span class="text-warning fs-5">
+                {% for i in "12345"|make_list %}
+                    {% if forloop.counter <= movie.avg_rating|default:0 %}
+                        ★
+                    {% else %}
+                        ☆
+                    {% endif %}
+                {% endfor %}
+                </span>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

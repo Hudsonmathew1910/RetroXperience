@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'images/logoRX.png' %}" type="image/png">
+    <title>RetroXperience</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        a.movie-link {
+            color: #0d6efd;           /* black text */
+            text-decoration: none;  /* no underline */
+            font-weight: bold;      /* bold text */
+            transition: color 0.3s;
+        }
+        a.movie-link:hover {
+            color: #0d50b3ff;         /* blue on hover */
+            text-decoration: underline;  /* underline on hover */
+        }
+        .btn-outline-light {
+        transition: all 0.3s ease; /* smooth transition for hover */
+        }
+        .btn-outline-light:hover {
+        background-color: #ffc107; /* yellow background */
+        border-color: #ffc107;     /* yellow border */
+        color: #000;               /* black text on hover */
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <div class="bg-dark py-2">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="{% static 'images/logoRX.png' %}" alt="RetroXperience Logo" width="40" height="40" class="me-2">
+                <span class="text-light h5 mb-0">RetroXperience</span>
+                </a>
+            </div>
+            <form class="d-flex" role="search" method="get" action="{% url 'movies:index' %}">
+                <input class="form-control me-2" type="search" placeholder="Search movies" aria-label="Search" name="q">
+                <button class="btn btn-outline-light" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+    <!-- Main content -->
+    <main class="flex-fill container">
+        {% block content %}
+        {% endblock %}
+    </main>
+        <footer class="bg-dark text-light py-1 mt-auto">
+        <div class="container text-center">
+            <p class="mb-1">&copy; {{ year }} RetroXperience. All rights reserved.</p>
+            <p>
+                <a href="/" class="text-warning me-2 text-decoration-none">Home</a>
+                <a href="{% url 'movies:index' %}" class="text-warning me-2 text-decoration-none">Movies</a>
+                <a href="mailto:huddy1910@gmail.com" class="text-warning text-decoration-none">Contact</a>
+            </p>
+        </div>
+        </footer>
+
+    <!-- Bootstrap JS (Optional for dropdowns, navbar toggle) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Add at the end of base.html, just before </body> -->
+</body>
+</html>

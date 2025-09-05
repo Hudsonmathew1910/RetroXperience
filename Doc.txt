@@ -1,0 +1,298 @@
+#  pipenv install django pandas scikit-learn
+# django-admin startproject retroxperience
+# python manage.py startapp movies
+
+# Views.py
+def index(request):
+    return HttpResponse("Hello, world. You're at the movies index.")
+
+# movies/urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.index, name='index'),    # '' represents the root URL -> /movies
+]
+
+# vdily/urls.py
+from django.urls import path, include
+
+urlpatterns = [
+    path('movies/', include('movies.urls')),
+]
+
+# python manage.py runserver
+    /movies/
+
+# modelspy
+from django.db import models
+
+class Genre(models.Model):
+    name = models.CharField(max_length=255)
+
+class Movies(models.Model):
+    title = models.CharField(max_length=255)
+    release_year = models.IntegerField()
+    number_in_stock = models.IntegerField()
+    daily_rate = models.FloatField()
+    genra = models.ForeignKey(Genre, on_delete=models.CASCADE)
+
+# settings.py
+INSTALLED_APPS = [
+    'movies.apps.MoviesConfig'
+]
+
+# python manage.py makemigrations
+# python manage.py migrate  
+
+# models.py
+from django.utils import timezone 
+
+class Movies(models.Model):
+    date_created = models.DateTimeField(default=timezone.now)
+
+# python manage.py makemigrations
+# python manage.py migrate  
+
+# python manage.py runserver
+    /admin/
+    -> open new terminal to don't have to stop server
+
+# python manage.py createsuperuser
+    username:
+    Email address:
+    Password:
+
+# Login in admin
+
+# admin.py
+from .models import Movies, Genre
+
+admin.site.register(Genre)
+admin.site.register(Movies)  
+ 
+-> Tells Django to show Genre and Movies in the admin panel.
+
+# models.py
+class Genre(models.Model):
+    
+    def __str__(self):
+        return self.name
+
+# admin.py
+class GenreAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+
+class MoviesAdmin(admin.ModelAdmin):
+    exclude = ('date_created',)
+    list_display = ('title', 'number_in_stock', 'daily_rate')
+
+admin.site.register(Genre, GenreAdmin)
+admin.site.register(Movies, MoviesAdmin)  
+
+-> controls how the Genre model appears in the admin interface.
+-> controls how the Movies model appears and behaves in the admin interface.
+-> exclude -> Fields listed here will not appear in the admin form.
+
+-> add new genre in django administration/movies/genre, eg:- action, comedy
+-> add new movie in django administration/movies/movies, eg;_ Terminator-Action
+
+# views.py
+from .models import Movies
+
+def index(request):
+    movies = Movies.objects.all()
+    return render(request, 'movies/index.html', {'movies': movies})
+
+-> Tells Django to look for your template file (index.html) inside your app’s templates folder.
+
+# migration/templates/movies/index.html
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Genre</th>
+            <th>Stock</th>
+            <th>Daily Rate</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for movie in movies %}        
+        <tr>
+        <td>{{ movie.title }}</td>
+        <td>{{ movie.genre }}</td>
+        <td>{{ movie.number_in_stock }}</td>
+        <td>{{ movie.daily_rate }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+-> Uses a loop to go through each movie, Displays movie details inside table cells.
+
+# pipenv install pylint-django
+
+# vdily/.pylintrc
+load-plugins=pylint-django
+
+-> configuration option in your .pylintrc file that tells Pylint (the Python linter) to load the pylint-django plugin.
+
+# bootstrap/doc/startedtemplate -> website
+    -> copy
+# templates/base.hmtl
+    <title>Vidly</title>
+
+    <body> 
+        <main class="container">
+            {% block content %}
+            {% endblock  %}
+        </main>
+    </body>
+
+# vdily/settings.py
+import os
+
+TEMPLATES = [
+    {
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+    }
+]
+
+# templates/movies/index.html
+{% extends "base.html" %}
+{% block content %}
+..
+..
+{% endblock %}
+
+# bootstrap/doc/navbar -> website
+    -> Navbar -> copy
+# templates/base.html
+<body>
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Vidly</a>
+        </div>
+    </nav>
+</body>
+
+# templates/movies/index.html
+<table class="table table-bordered table-hover table-dark">
+</table>
+
+# movies/urls.py
+urlpatterns = [
+    path('', views.index, name='movies_index'),
+    path('<int:movies_id>', views.detail, name='movies_detail')
+] 
+
+# movies/views.py
+def detail(request, movies_id):
+    movie = Movies.objects.get(pk=movies_id)
+    return render(request, 'movies/detail.html', {'movie': movie})
+
+# templates/movies/detail.html
+{% extends "base.html" %}
+{% block content %}
+    <dl>
+        <dt>Title</dt>
+        <dd>{{ movie.title }}</dd>
+        <dt>Genre</dt>
+        <dd>{{ movie.genre }}</dd>
+        <dt>Stock</dt>
+        <dd>{{ movie.number_in_stock }}</dd>
+    </dl>
+{% endblock content %}
+
+# movies/views.py
+from django.shortcuts import render, get_object_or_404
+
+def detail(request, movies_id):
+        movie = get_object_or_404(Movies,pk=movies_id)
+        return render(request, 'movies/detail.html', {'movie': movie})
+    
+# movies/index.html
+-> replace
+ <td>
+     <a href="{% url 'movies:detail' movie.id %}">{{ movie.title }}</a>
+</td>
+
+# movies/urls.py
+app_name = 'movies'
+urlpatterns = [
+    path('', views.index, name='index'),    
+    path('<int:movies_id>', views.detail, name='detail')
+] 
+
+# pipenv install django-tastypie
+# python manage.py startapp api
+
+# vidly/settings.py
+INSTALLED_APPS = [
+                        ,
+    'api.apps.ApiConfig'
+]
+
+# api/models.py
+from django.db import models
+from tastypie.resources import ModelResource
+from movies.models import Movies
+
+# Create your models here.
+class MovieResponse(ModelResource):
+    class Meta:
+        queryset = Movies.objects.all()
+        resource_name = 'movies'
+        excludes = ['date_created']
+
+# vidly/urls.py
+from api.models import MovieResponse
+
+movie_resource = MovieResponse()
+urlpatterns = [
+    path('api/', include(movie_resource.urls)),
+]
+
+# vidly/views.py
+from django.shortcuts import render
+
+def home(request):
+    return render(request, 'home.html')
+
+# vdily/urls.py
+from . import views
+
+urlpatterns = [
+    path('', views.home),
+]
+
+# templates/home.html
+{% extends "base.html" %}
+
+{% block content %} 
+    <a href="{% url 'movies:index' %}">Movies</a>
+{% endblock  %}
+
+# pipenv install gunicorn
+
+# vidly/Procfile -> Create
+web: gunicorn vidly.wsgi  
+
+# ststic -> createFolder
+
+# vidly/settings.py
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# python manage.py collectstatic
+
+# pipenv install whitenoise
+
+# vidly/settings.py
+MIDDLEWARE = 
+    [
+    'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware"
+    ]
+
+# git init

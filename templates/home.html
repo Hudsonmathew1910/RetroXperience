@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %} 
+<!-- Inside your base.html or home.html -->
+<div class="jumbotron text-center mt-4">
+    <h1>Welcome to RetroXperience</h1>
+    <p>Explore movies from past decades with ratings.</p>
+    <a href="{% url 'movies:index' %}" class="btn btn-primary btn-lg">View Movies</a>
+    <a href="https://hudsonmathew1910.github.io/Huddy/index.html" class="btn btn-warning btn-lg">Developer Info</a>
+    <p class="mt-4 fst-italic text-secondary">
+        "Cinema is a mirror by which we often see ourselves." – Alejandro Gonzalez Inarritu
+    </p>
+</div>
+
+{% endblock  %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container my-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h2 class="card-title">{{ movie.title }}</h2>
+            <p class="card-text">{{ movie.description }}</p>
+            
+            <ul class="list-group list-group-flush mb-3">
+                <li class="list-group-item"><strong>Genre:</strong> {{ movie.genre }}</li>
+                <li class="list-group-item"><strong>Year:</strong> {{ movie.year }}</li>
+                <li class="list-group-item"><strong>Platform:</strong> {{ movie.platform }}</li>
+            </ul>
+            
+            <p class="mb-3">
+                <strong>Average Rating:</strong>
+                <span class="text-warning fs-4">
+                    {% for i in "12345"|make_list %}
+                        {% if forloop.counter <= avg_rating|default:0 %}
+                            ★
+                        {% else %}
+                            ☆
+                        {% endif %}
+                    {% endfor %}
+                </span>
+            </p>
+            
+            <!-- Rating form -->
+            <form method="post" class="d-flex align-items-center gap-2">
+                {% csrf_token %}
+                <label for="rating" class="mb-0"><strong>Rate this movie:</strong></label>
+                <select name="rating" id="rating" class="form-select w-auto">
+                    {% for i in "12345" %}
+                        <option value="{{ i }}">{{ i }} Star{% if i != "1" %}s{% endif %}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
