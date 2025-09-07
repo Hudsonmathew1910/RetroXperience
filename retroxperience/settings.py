@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-&vu+27oojh1d+2&ec_tyb28bl$a8br0-6$-q3*)caielhrp^uc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['retroxperience.onrender.com']
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 
 # Application definition
