@@ -22,7 +22,7 @@ def index(request):
         movies = movies.filter(title__icontains=search_query)
     
     # Annotate average rating
-    movies = movies.annotate(avg_rating=Avg('ratings__rating'))
+    movies = movies.only('id', 'title', 'genre', 'year').annotate(avg_rating=Avg('ratings__rating'))
     
     # Dropdown options
     genres = Movies.objects.values_list('genre', flat=True).distinct()
