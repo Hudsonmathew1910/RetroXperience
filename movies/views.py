@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Movies, MovieRating
 from django.db.models import Avg
+from django.core.paginator import Paginator
 
 def index(request):
     movies = Movies.objects.all()
@@ -27,13 +28,18 @@ def index(request):
     genres = Movies.objects.values_list('genre', flat=True).distinct()
     years = Movies.objects.values_list('year', flat=True).distinct().order_by('year')
     
+    # Page
+    paginator = Paginator(movies, 25)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
     return render(request, 'movies/index.html', {
-        'movies': movies,
         'genres': genres,
         'years': years,
         'select_genre': select_genre,
         'select_year': select_year,
         'search_query': search_query,
+        'page_obj' : page_obj
     })
 
     

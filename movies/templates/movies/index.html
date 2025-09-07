@@ -43,7 +43,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for movie in movies %}
+        {% for movie in page_obj %}
         <tr>
             <td><a href="{% url 'movies:detail' movie.id %}" class="movie-link">{{ movie.title }}</a></td>
             <td>{{ movie.genre }}</td>
@@ -64,4 +64,21 @@
         {% endfor %}
     </tbody>
 </table>
+<nav aria-label="Page navigation">
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&genre={{ select_genre }}&year={{ select_year }}&q={{ search_query }}">Previous</a>
+      </li>
+    {% endif %}
+    <li class="page-item disabled">
+      <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    </li>
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}&genre={{ select_genre }}&year={{ select_year }}&q={{ search_query }}">Next</a>
+      </li>
+    {% endif %}
+  </ul>
+</nav>
 {% endblock %}
