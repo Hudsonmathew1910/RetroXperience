@@ -1,1 +1,1 @@
-web: gunicorn retroxperience.wsgi
+web: gunicorn retroxperience.wsgi:application
