@@ -1,1 +1,1 @@
-web: gunicorn retroxperience.wsgi:application
+web: gunicorn retroxperience.wsgi:application  --bind 0.0.0.0:$PORT
